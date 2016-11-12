@@ -147,3 +147,40 @@ def nearCity(centerCity, airport, radius = 0.45):
 
 
 
+# returns a dictionary format of the cities info
+#should put in something like filterbycity(get_json_data(url))
+def filterbycity(city, lstofdicts):
+    cities = []
+    for dictionary in lstofdicts:
+        if findcity(dictionary.get("destination")) == city:
+            cities.append(dictionary)
+    return cities
+
+
+#gets all lists of dictionaries in between two dates in a string format ("2016-03")
+def filterbyperiod(startdate, enddate, lstofdicts):
+    periods = []
+    for dictionary in lstofdicts:
+        current = dictionary.get("period")
+        if bigger(current, startdate) and bigger(enddate, current):            
+            periods.append(dictionary)
+    return periods
+
+
+# def filterbyregion(region):
+
+
+
+
+def bigger(date1, date2):
+    year1 = int(date1[:4])
+    month1 = int(date1[5:])
+    year2 = int(date1[:4])
+    month2 = int(date1[5:])
+    if year1 > year2:
+        return True
+    if year2 == year1 and month1 > month2:
+        return True
+    return False
+
+
