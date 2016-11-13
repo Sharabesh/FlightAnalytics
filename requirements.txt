@@ -1,7 +1,7 @@
 Flask==0.11.1
 Geocoder==1.17.5
 googlemaps==2.4.4
-json==2.0.9
 requests==2.10.0
 urllib.requets==3.4
 amadeus==0.1.2
+json==3.3.2
