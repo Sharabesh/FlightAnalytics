@@ -43,11 +43,6 @@ def get_all_flights(period):
             answer.append(get_json_data(url))
     print(answer)
 
-
-
-
-
-
 def get_json_data(url):
     response = urllib.request.urlopen(url)
     data = response.read().decode("utf-8")
@@ -167,12 +162,19 @@ def nearCity(centerCity, airport, radius = 0.45):
 
 
 #Test Cases
+locations = ['ATL','LAX','ORD','DFW','JFK','DEN','SFO','CLT','LAS','PHX']
 
 def draw_circle(lat,long,size):
     gmap = gmplot.GoogleMapPlotter(lat,long,size)
     circle(gmap,lat,long,size)
     gmap.draw("mymap.html")
 
+
+def findSize (duration, lstdictionary):
+    totalCount = 0;
+    for everything in lstdictionary:
+        totalCount += everything['trip_duration'][duration]
+    return totalCount
 
 
 def circle(self, lat, lng, radius, color=None, c=None, **kwargs):
@@ -183,8 +185,6 @@ def circle(self, lat, lng, radius, color=None, c=None, **kwargs):
     settings = self._process_kwargs(kwargs)
     path = self.get_cycle(lat, lng, radius)
     self.shapes.append((path, settings))
-
-
 
 # returns a dictionary format of the cities info
 #should put in something like filterbycity(get_json_data(url))
@@ -207,6 +207,21 @@ def filterbyperiod(startdate, enddate, lstofdicts):
 
 
 # def filterbyregion(region):
+def filterbyorigin(origin, lstofdicts):
+    origins = []
+    for dictionary in lstofdicts:
+        if dictionary.get("origin") == origin:
+            origins.append(dictionary)
+    return origins
+
+# def filterbystay
+#     stay = []
+#     for dictionary in lstofdicts:
+#         if dictionary.get("stay") == origin:
+#             origins.append(dictionary)
+#     return stay
+
+
 
 def bigger(date1, date2):
     year1 = int(date1[:4])
@@ -219,7 +234,12 @@ def bigger(date1, date2):
         return True
     return False
 
-if __name__ == "__main__":
-    app.debug = True
-    app.run()
+# if __name__ == "__main__":
+#     app.debug = True
+#     app.run()
+
+BIGLIST = [{'trip_duration': {'24': 157, '4': 81, '5': 138, '17': 283, '25': 117, '27': 84, '19': 150, '3': 43, '11': 365, '9': 382, '20': 193, '2': 38, '31+': 3623, '23': 135, '6': 174, '16': 327, '30': 165, '7': 588, '14': 868, '29': 116, '15': 470, '18': 179, '13': 315, '10': 422, '12': 269, '26': 84, '21': 399, '22': 252, '28': 193, 'same_day': 74, '1': 38, '8': 291}, 'advance_search_period': {'211+': 943, '113-119': 461, '57-63': 463, '0-7': 313, '29-35': 477, '120-126': 258, '176-182': 103, '204-210': 69, '162-168': 119, '78-84': 486, '22-28': 372, '106-112': 607, '85-91': 742, '155-161': 142, '8-14': 372, '148-154': 189, '15-21': 366, '50-56': 392, '92-98': 936, '99-105': 778, '64-70': 384, '169-175': 125, '197-203': 68, '127-133': 224, '71-77': 397, '134-140': 205, '36-42': 309, '190-196': 116, '141-147': 199, '183-189': 87, '43-49': 312}, 'country': 'US', 'origin': 'BOS', 'period': '2015-09', 'results': [{'searches': 11032, 'destination': 'BKK', 'searches_prior_year': 7865}]},{'trip_duration': {'24': 157, '4': 81, '5': 138, '17': 283, '25': 117, '27': 84, '19': 150, '3': 43, '11': 365, '9': 382, '20': 193, '2': 38, '31+': 3623, '23': 135, '6': 174, '16': 327, '30': 165, '7': 588, '14': 868, '29': 116, '15': 470, '18': 179, '13': 315, '10': 422, '12': 269, '26': 84, '21': 399, '22': 252, '28': 193, 'same_day': 74, '1': 38, '8': 291}, 'advance_search_period': {'211+': 943, '113-119': 461, '57-63': 463, '0-7': 313, '29-35': 477, '120-126': 258, '176-182': 103, '204-210': 69, '162-168': 119, '78-84': 486, '22-28': 372, '106-112': 607, '85-91': 742, '155-161': 142, '8-14': 372, '148-154': 189, '15-21': 366, '50-56': 392, '92-98': 936, '99-105': 778, '64-70': 384, '169-175': 125, '197-203': 68, '127-133': 224, '71-77': 397, '134-140': 205, '36-42': 309, '190-196': 116, '141-147': 199, '183-189': 87, '43-49': 312}, 'country': 'US', 'origin': 'BOS', 'period': '2015-09', 'results': [{'searches': 11032, 'destination': 'BKK', 'searches_prior_year': 7865}]}]
+
+
+
 
