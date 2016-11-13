@@ -1,8 +1,6 @@
 import amadeus
 import json
 import urllib.request
-from lxml import html
-import requests
 import gmplot
 import googlemaps
 import re
