@@ -1,7 +1,7 @@
 import amadeus
 import json
 import urllib.request
-import gmplot
+import gmplot.gmplot
 import googlemaps
 import re
 import urllib
@@ -167,7 +167,7 @@ def nearCity(centerCity, airport, radius = 0.45):
 #Test Cases
 
 def draw_circle(lat,long,size):
-    gmap = gmplot.GoogleMapPlotter(lat,long,size)
+    gmap = gmplot.gmplot.GoogleMapPlotter(lat,long,size)
     circle(gmap,lat,long,size)
     gmap.draw("mymap.html")
 
