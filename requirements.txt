@@ -1,4 +1,3 @@
-Python3==3.4.3
 Flask==0.11.1
 Geocoder==1.17.5
 googlemaps==2.4.4
@@ -6,8 +5,3 @@ json==2.0.9
 requests==2.10.0
 urllib.requets==3.4
 amadeus==0.1.2
-<<<<<<< HEAD
-re==2.2.1
-=======
-re==2.2.1
->>>>>>> 1d302eb6fee84cdce864c884c37e623bc8b16a32
