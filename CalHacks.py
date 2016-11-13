@@ -8,8 +8,15 @@ import googlemaps
 import re
 import urllib
 import geocoder
-import flask
+from flask import Flask, request,session, g, redirect, url_for, abort, render_template, flash, jsonify
 
+app = Flask(__name__)
+app.config.from_object(__name__)
+
+
+@app.route("/")
+def showmain():
+    return render_template("mymap.html")
 
 
 def get_all_flights(period):
@@ -212,4 +219,7 @@ def bigger(date1, date2):
         return True
     return False
 
+if __name__ == "__main__":
+    app.debug = True
+    app.run()
 
