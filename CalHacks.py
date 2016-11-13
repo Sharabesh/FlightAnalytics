@@ -9,42 +9,36 @@ import geocoder
 from flask import Flask, request,session, g, redirect, url_for, abort, render_template, flash, jsonify
 import os
 
+globalURL = 'https://api.sandbox.amadeus.com/v1.2/' \
+  'travel-intelligence/' \
+  'top-searches?' \
+  'period={0}' \
+  '&origin={1}' \
+  '&destination={2}' \
+  '&country=US' \
+  '&apikey=MOVlGTC47XulnCM32cPbOT5PSzmLfLhL'
+
 app = Flask(__name__)
 app.config.from_object(__name__)
+period = '2015-09'
+origin = 'BOS'
+destination = 'BKK'
 
+url = 'https://api.sandbox.amadeus.com/v1.2/' \
+      'travel-intelligence/' \
+      'top-searches?' \
+      'period={0}' \
+      '&origin={1}' \
+      '&destination={2}' \
+      '&country=US' \
+      '&apikey=MOVlGTC47XulnCM32cPbOT5PSzmLfLhL'.format(period,origin,destination)
+
+
+cached_months = ['2014-09','2014-10','2014-11','2014-12','2015-01','2015-02']
 
 @app.route("/")
 def showmain():
     return render_template("mymap.html")
-
-
-def get_all_flights(period):
-    period = '2014-01--2014-12'
-    origin = 'TYO'
-    destination = 'BKK'
-    apikey = 'MOVlGTC47XulnCM32cPbOT5PSzmLfLhL'
-
-    url = 'https://api.sandbox.amadeus.com/v1.2/' \
-          'travel-intelligence/' \
-          'flight-traffic?' \
-          'period={0}' \
-          '&origin={1}' \
-          '&destination={2}' \
-          '&apikey=MOVlGTC47XulnCM32cPbOT5PSzmLfLhL'
-
-    answer = []
-    x = get_airportCodes(url)
-    for i in range(len(x) -1):
-        for j in range(i+1,len(x)):
-            origin = x[i]
-            destination = x[j]
-            url = url.format(period,origin,destination)
-            answer.append(get_json_data(url))
-    print(answer)
-
-
-
-
 
 
 def get_json_data(url):
@@ -52,6 +46,30 @@ def get_json_data(url):
     data = response.read().decode("utf-8")
     #all_results = json.loads(data)["results"]
     return json.loads(data)
+
+
+
+print(get_json_data(url))
+print(url)
+
+
+
+
+def getFlights():
+    answer = []
+    x = get_airportCodes("hello")
+    for q in range(2):
+        if (q == 1):
+            x = x[::-1]
+        for i in range(len(x) - 1):
+            for j in range(i+1,len(x)):
+                origin = x[i]
+                destination = x[j]
+                url = globalURL.format(period,origin,destination)
+                y = get_json_data(url)
+                answer.append(y)
+    return answer
+
 
 
 def get_distance(start,end):
@@ -91,14 +109,6 @@ def generate_region(centerCities, airportCodes, js):
                     cityAirports[city] = airportCodes
 
 
-def circle(self, lat, lng, radius, color=None, c=None, **kwargs):
-    color = color or c
-    kwargs.setdefault('face_alpha', 0.5)
-    kwargs.setdefault('face_color', "#000000")
-    kwargs.setdefault("color", color)
-    settings = self._process_kwargs(kwargs)
-    path = self.get_cycle(lat, lng, radius)
-    self.shapes.append((path, settings))
 
 ### BREAK ###
 
@@ -169,7 +179,7 @@ def nearCity(centerCity, airport, radius = 0.45):
 
 def draw_circle(lat,long,size):
     gmap = gmplot.gmplot.GoogleMapPlotter(lat,long,size)
-    circle(gmap,lat,long,size)
+    gmap.circle([lat],[long],size)
     gmap.draw("mymap.html")
 
 
@@ -218,7 +228,7 @@ def bigger(date1, date2):
         return True
     return False
 
-if __name__ == "__main__":
-    port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port)
+#if __name__ == "__main__":
+    # port = int(os.environ.get('PORT', 5000))
+    # app.run(host='0.0.0.0', port=port)
 
