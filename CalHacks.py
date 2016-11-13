@@ -1,47 +1,45 @@
 import amadeus
 import json
 import urllib.request
-from lxml import html
-import requests
-import gmplot
+import gmplot.gmplot
 import googlemaps
 import re
 import urllib
 import geocoder
 from flask import Flask, request,session, g, redirect, url_for, abort, render_template, flash, jsonify
+import os
+
+globalURL = 'https://api.sandbox.amadeus.com/v1.2/' \
+  'travel-intelligence/' \
+  'top-searches?' \
+  'period={0}' \
+  '&origin={1}' \
+  '&destination={2}' \
+  '&country=US' \
+  '&apikey=MOVlGTC47XulnCM32cPbOT5PSzmLfLhL'
 
 app = Flask(__name__)
 app.config.from_object(__name__)
+period = '2015-09'
+origin = 'BOS'
+destination = 'BKK'
 
+url = 'https://api.sandbox.amadeus.com/v1.2/' \
+      'travel-intelligence/' \
+      'top-searches?' \
+      'period={0}' \
+      '&origin={1}' \
+      '&destination={2}' \
+      '&country=US' \
+      '&apikey=MOVlGTC47XulnCM32cPbOT5PSzmLfLhL'.format(period,origin,destination)
+
+
+cached_months = ['2014-09','2014-10','2014-11','2014-12','2015-01','2015-02']
 
 @app.route("/")
 def showmain():
     return render_template("mymap.html")
 
-
-def get_all_flights(period):
-    period = '2014-01--2014-12'
-    origin = 'TYO'
-    destination = 'BKK'
-    apikey = 'MOVlGTC47XulnCM32cPbOT5PSzmLfLhL'
-
-    url = 'https://api.sandbox.amadeus.com/v1.2/' \
-          'travel-intelligence/' \
-          'flight-traffic?' \
-          'period={0}' \
-          '&origin={1}' \
-          '&destination={2}' \
-          '&apikey=MOVlGTC47XulnCM32cPbOT5PSzmLfLhL'
-
-    answer = []
-    x = get_airportCodes(url)
-    for i in range(len(x) -1):
-        for j in range(i+1,len(x)):
-            origin = x[i]
-            destination = x[j]
-            url = url.format(period,origin,destination)
-            answer.append(get_json_data(url))
-    print(answer)
 
 def get_json_data(url):
     response = urllib.request.urlopen(url)
@@ -49,6 +47,27 @@ def get_json_data(url):
     #all_results = json.loads(data)["results"]
     return json.loads(data)
 
+
+def get_json_data(url):
+    response = urllib.request.urlopen(url)
+    data = response.read().decode("utf-8")
+    #all_results = json.loads(data)["results"]
+    return json.loads(data)
+
+def getFlights():
+    answer = []
+    x = get_airportCodes("hello")
+    for q in range(2):
+        if (q == 1):
+            x = x[::-1]
+        for i in range(len(x) - 1):
+            for j in range(i+1,len(x)):
+                origin = x[i]
+                destination = x[j]
+                url = globalURL.format(period,origin,destination)
+                y = get_json_data(url)
+                answer.append(y)
+    return answer
 
 def get_distance(start,end):
     url = 'https://www.world-airport-codes.com/distance/?' \
@@ -87,14 +106,6 @@ def generate_region(centerCities, airportCodes, js):
                     cityAirports[city] = airportCodes
 
 
-def circle(self, lat, lng, radius, color=None, c=None, **kwargs):
-    color = color or c
-    kwargs.setdefault('face_alpha', 0.5)
-    kwargs.setdefault('face_color', "#000000")
-    kwargs.setdefault("color", color)
-    settings = self._process_kwargs(kwargs)
-    path = self.get_cycle(lat, lng, radius)
-    self.shapes.append((path, settings))
 
 ### BREAK ###
 
@@ -135,13 +146,13 @@ def get_airportCodes(url = "http://airportcodes.org/"):
 # Returns the lat and long of an aiport
 def googleAirport(airportcode):
     g = geocoder.google(findcity(airportcode)+ ", "+ findstate(airportcode))
-    TupesCoordinate = g.latlong
+    TupesCoordinate = g.latlng
     return TupesCoordinate
 
 # Returns the lat and long of a city
 def googleCity(city):
     g = geocoder.google(city + ", "+ statefromcity(city))
-    TupesCoordinate = g.latlong
+    TupesCoordinate = g.latlng
     return TupesCoordinate
 
 ### BREAK ###
@@ -158,23 +169,29 @@ def nearCity(centerCity, airport, radius = 0.45):
     return inRange(centerCitylat, centerCitylong, airportlat, airportlong)
 
 
-# DUMP
-
-
 #Test Cases
 locations = ['ATL','LAX','ORD','DFW','JFK','DEN','SFO','CLT','LAS','PHX']
 
 def draw_circle(lat,long,size):
     gmap = gmplot.GoogleMapPlotter(lat,long,size)
-    circle(gmap,lat,long,size)
-    gmap.draw("mymap.html")
+    gmap.circle(lat,long,size)
+    gmap.draw("templates/mymap.html")
 
 
-def findSize (duration, lstdictionary):
+# def draw_circle(lat,long,size):
+#     gmap = gmplot.gmplot.GoogleMapPlotter(lat,long,size)
+#     gmap.circle([lat],[long],size)
+#     gmap.draw("mymap.html")
+
+
+def findSize (duration, dest, lstdictionary):
     totalCount = 0;
     for everything in lstdictionary:
-        totalCount += everything['trip_duration'][duration]
+        if everything['results'][0]['destination'] == dest:
+            totalCount += everything['trip_duration'][duration]
     return totalCount
+
+
 
 
 def circle(self, lat, lng, radius, color=None, c=None, **kwargs):
@@ -214,15 +231,6 @@ def filterbyorigin(origin, lstofdicts):
             origins.append(dictionary)
     return origins
 
-# def filterbystay
-#     stay = []
-#     for dictionary in lstofdicts:
-#         if dictionary.get("stay") == origin:
-#             origins.append(dictionary)
-#     return stay
-
-
-
 def bigger(date1, date2):
     year1 = int(date1[:4])
     month1 = int(date1[5:])
@@ -234,18 +242,13 @@ def bigger(date1, date2):
         return True
     return False
 
-# if __name__ == "__main__":
-#     app.debug = True
-#     app.run()
-
-def findSize (duration, lstdictionary):
-    totalCount = 0;
-    for everything in lstdictionary:
-        totalCount += everything['trip_duration'][duration]
-    return totalCount
+def finishedProduct(duration, dest, lstdictionary):
+    airportsList = get_airportCodes()
+    for code in airportsList:
+        size = findSize(duration, dest, lstdictionary)
+        lat = googleAirport(code)[0]
+        lng = googleAirport(code)[1]
+        draw_circle(lat, lng, size)
 
 BIGLIST = [{'trip_duration': {'24': 157, '4': 81, '5': 138, '17': 283, '25': 117, '27': 84, '19': 150, '3': 43, '11': 365, '9': 382, '20': 193, '2': 38, '31+': 3623, '23': 135, '6': 174, '16': 327, '30': 165, '7': 588, '14': 868, '29': 116, '15': 470, '18': 179, '13': 315, '10': 422, '12': 269, '26': 84, '21': 399, '22': 252, '28': 193, 'same_day': 74, '1': 38, '8': 291}, 'advance_search_period': {'211+': 943, '113-119': 461, '57-63': 463, '0-7': 313, '29-35': 477, '120-126': 258, '176-182': 103, '204-210': 69, '162-168': 119, '78-84': 486, '22-28': 372, '106-112': 607, '85-91': 742, '155-161': 142, '8-14': 372, '148-154': 189, '15-21': 366, '50-56': 392, '92-98': 936, '99-105': 778, '64-70': 384, '169-175': 125, '197-203': 68, '127-133': 224, '71-77': 397, '134-140': 205, '36-42': 309, '190-196': 116, '141-147': 199, '183-189': 87, '43-49': 312}, 'country': 'US', 'origin': 'BOS', 'period': '2015-09', 'results': [{'searches': 11032, 'destination': 'BKK', 'searches_prior_year': 7865}]},{'trip_duration': {'24': 157, '4': 81, '5': 138, '17': 283, '25': 117, '27': 84, '19': 150, '3': 43, '11': 365, '9': 382, '20': 193, '2': 38, '31+': 3623, '23': 135, '6': 174, '16': 327, '30': 165, '7': 588, '14': 868, '29': 116, '15': 470, '18': 179, '13': 315, '10': 422, '12': 269, '26': 84, '21': 399, '22': 252, '28': 193, 'same_day': 74, '1': 38, '8': 291}, 'advance_search_period': {'211+': 943, '113-119': 461, '57-63': 463, '0-7': 313, '29-35': 477, '120-126': 258, '176-182': 103, '204-210': 69, '162-168': 119, '78-84': 486, '22-28': 372, '106-112': 607, '85-91': 742, '155-161': 142, '8-14': 372, '148-154': 189, '15-21': 366, '50-56': 392, '92-98': 936, '99-105': 778, '64-70': 384, '169-175': 125, '197-203': 68, '127-133': 224, '71-77': 397, '134-140': 205, '36-42': 309, '190-196': 116, '141-147': 199, '183-189': 87, '43-49': 312}, 'country': 'US', 'origin': 'BOS', 'period': '2015-09', 'results': [{'searches': 11032, 'destination': 'BKK', 'searches_prior_year': 7865}]}]
-
-
-
 
