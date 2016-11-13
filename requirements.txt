@@ -6,4 +6,8 @@ json==2.0.9
 requests==2.10.0
 urllib.requets==3.4
 amadeus==0.1.2
+<<<<<<< HEAD
 re==2.2.1
+=======
+re==2.2.1
+>>>>>>> 1d302eb6fee84cdce864c884c37e623bc8b16a32
