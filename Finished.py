@@ -34,7 +34,6 @@ url = 'https://api.sandbox.amadeus.com/v1.2/' \
       '&apikey=MOVlGTC47XulnCM32cPbOT5PSzmLfLhL'.format(period,origin,destination)
 
 
-cached_months = ['2014-09','2014-10','2014-11','2014-12','2015-01','2015-02']
 
 @app.route("/")
 def showmain():

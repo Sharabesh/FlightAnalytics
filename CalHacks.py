@@ -8,6 +8,7 @@ import urllib
 import geocoder
 from flask import Flask, request,session, g, redirect, url_for, abort, render_template, flash, jsonify
 import os
+from cache import a
 
 globalURL = 'https://api.sandbox.amadeus.com/v1.2/' \
   'travel-intelligence/' \
@@ -185,11 +186,14 @@ def draw_circle(lat,long,size):
 
 
 def findSize (duration, dest, lstdictionary):
-    totalCount = 0;
-    for everything in lstdictionary:
-        if everything['results'][0]['destination'] == dest:
-            totalCount += everything['trip_duration'][duration]
-    return totalCount
+    try:
+        totalCount = 0;
+        for everything in lstdictionary:
+            if everything['results'][0]['destination'] == dest:
+                totalCount += everything['trip_duration'][duration]
+        return totalCount
+    except:
+        pass
 
 
 
