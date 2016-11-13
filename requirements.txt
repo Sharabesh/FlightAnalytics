@@ -5,3 +5,4 @@ requests==2.10.0
 urllib3==1.19
 amadeus==0.1.2
 lxml==3.3.6
+gmplot=1.0.5
