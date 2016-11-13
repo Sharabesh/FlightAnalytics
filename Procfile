@@ -1,1 +1,1 @@
-python3 CalHacks.py
+web: python3 CalHacks.py
