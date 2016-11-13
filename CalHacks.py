@@ -9,18 +9,35 @@ import re
 import urllib
 import geocoder
 
-period = '2014-01--2014-12'
-origin = 'TYO'
-destination = 'BKK'
-apikey = 'MOVlGTC47XulnCM32cPbOT5PSzmLfLhL'
 
-url = 'https://api.sandbox.amadeus.com/v1.2/' \
-      'travel-intelligence/' \
-      'flight-traffic?' \
-      'period={0}' \
-      '&origin={1}' \
-      '&destination={2}' \
-      '&apikey=MOVlGTC47XulnCM32cPbOT5PSzmLfLhL'.format(period,origin,destination)
+
+def get_all_flights(period):
+    period = '2014-01--2014-12'
+    origin = 'TYO'
+    destination = 'BKK'
+    apikey = 'MOVlGTC47XulnCM32cPbOT5PSzmLfLhL'
+
+    url = 'https://api.sandbox.amadeus.com/v1.2/' \
+          'travel-intelligence/' \
+          'flight-traffic?' \
+          'period={0}' \
+          '&origin={1}' \
+          '&destination={2}' \
+          '&apikey=MOVlGTC47XulnCM32cPbOT5PSzmLfLhL'
+
+    answer = []
+    x = get_airportCodes(url)
+    for i in range(len(x) -1):
+        for j in range(i+1,len(x)):
+            origin = x[i]
+            destination = x[j]
+            url = url.format(period,origin,destination)
+            answer.append(get_json_data(url))
+    print(answer)
+
+
+
+
 
 
 def get_json_data(url):
@@ -29,7 +46,6 @@ def get_json_data(url):
     #all_results = json.loads(data)["results"]
     return json.loads(data)
 
-print(get_json_data(url)[0])
 
 def get_distance(start,end):
     url = 'https://www.world-airport-codes.com/distance/?' \
@@ -60,12 +76,12 @@ def generate_region(centerCities, airportCodes, js):
 
     for city in centerCities:
         for airportcode in js:
-            if nearCity(centerCity, airportcodes):
+            if nearCity(city, airportcode):
 
                 if cityAirports[city] in cityAirports:
-                    cityAirports.append(airportcodes)
+                     cityAirports[city].append(airportCodes)
                 else:
-                    cityAirports[city] = airportcodes
+                    cityAirports[city] = airportCodes
 
 
 def circle(self, lat, lng, radius, color=None, c=None, **kwargs):
@@ -101,16 +117,17 @@ def statefromcity(city, url = "http://airportcodes.org/"):
     return m.group(2)
 
 def get_airportCodes(url = "http://airportcodes.org/"):
-    airCodes = set()
-
-    response = urllib.request.urlopen(url)
-    data = response.read().decode("utf-8")
-    pattern = re.compile('(.*),\s([A-Z]{2}).*\s\((.*)\)')
-
-    for m in re.finditer(pattern, data):
-        airCodes.add(m.group(3))
-
-    print(airCodes)
+    # airCodes = set()
+    #
+    # response = urllib.request.urlopen(url)
+    # data = response.read().decode("utf-8")
+    # pattern = re.compile('(.*),\s([A-Z]{2}).*\s\((.*)\)')
+    #
+    # for m in re.finditer(pattern, data):
+    #     airCodes.add(m.group(3))
+    #
+    # return airCodes
+    return ['ATL','LAX','ORD','DFW','JFK','DEN','SFO','CLT','LAS','PHX']
 
 # Returns the lat and long of an aiport
 def googleAirport(airportcode):
@@ -143,7 +160,21 @@ def nearCity(centerCity, airport, radius = 0.45):
 
 #Test Cases
 
+def draw_circle(lat,long,size):
+    gmap = gmplot.GoogleMapPlotter(lat,long,size)
+    circle(gmap,lat,long,size)
+    gmap.draw("mymap.html")
 
+
+
+def circle(self, lat, lng, radius, color=None, c=None, **kwargs):
+    color = color or c
+    kwargs.setdefault('face_alpha', 0.5)
+    kwargs.setdefault('face_color', "#000000")
+    kwargs.setdefault("color", color)
+    settings = self._process_kwargs(kwargs)
+    path = self.get_cycle(lat, lng, radius)
+    self.shapes.append((path, settings))
 
 
 
@@ -168,9 +199,6 @@ def filterbyperiod(startdate, enddate, lstofdicts):
 
 
 # def filterbyregion(region):
-
-
-
 
 def bigger(date1, date2):
     year1 = int(date1[:4])
