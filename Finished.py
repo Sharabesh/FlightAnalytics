@@ -61,14 +61,8 @@ def googleAirport(airportcode):
     TupesCoordinate = g.latlng
     return TupesCoordinate
 
-# Returns the lat and long of a city
-def googleCity(city):
-    g = geocoder.google(city + ", "+ statefromcity(city))
-    TupesCoordinate = g.latlng
-    return TupesCoordinate
-
 # Finds the popularity of different trip durations for a given destination
-def findSize (duration, dest, lstdictionary):
+def findSize (duration, dest, month, lstdictionary):
     totalCount = 0;
     for everything in lstdictionary:
         if everything['results'][0]['destination'] == dest:
