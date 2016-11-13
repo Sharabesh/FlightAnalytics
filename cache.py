@@ -1,6 +1,68 @@
 import CalHacks as prior
 cached_months = ['2014-09','2014-10','2014-11','2014-12','2015-01','2015-02','2015-03','2015-04','2015-05','2015-06','2015-07','2015-08','2015-09']
 
+# Finds the popularity of different trip durations for a given destination
+# def findSize (duration, dest, date, lstdictionary):
+#     totalCount = 0;
+#     if date == '2014-09':
+#       for everything in lstdictionary[0]:
+#           return everything['results'][0]['destination'] == dest:
+#               totalCount += everything['trip_duration'][duration]
+#     if date == '2014-10':
+#       for everything in lstdictionary[1]:
+#           return everything['results'][0]['destination'] == dest:
+#               totalCount += everything['trip_duration'][duration]
+
+#     if date == '2014-11':
+#       for everything in lstdictionary[2]:
+#           return everything['results'][0]['destination'] == dest:
+#               totalCount += everything['trip_duration'][duration]
+#         if date == '2014-12':
+#       for everything in lstdictionary[3]:
+#           return everything['results'][0]['destination'] == dest:
+#               totalCount += everything['trip_duration'][duration]
+#     if date == '2015-01':
+#       for everything in lstdictionary[4]:
+#           return everything['results'][0]['destination'] == dest:
+#               totalCount += everything['trip_duration'][duration]
+
+#     if date == '2015-02':
+#       for everything in lstdictionary[5]:
+#           return everything['results'][0]['destination'] == dest:
+#               totalCount += everything['trip_duration'][duration]
+#         if date == '2015-03':
+#       for everything in lstdictionary[6]:
+#           return everything['results'][0]['destination'] == dest:
+#               totalCount += everything['trip_duration'][duration]
+#     if date == '2015-04':
+#       for everything in lstdictionary[7]:
+#           return everything['results'][0]['destination'] == dest:
+#               totalCount += everything['trip_duration'][duration]
+
+#     if date == '2015-05':
+#       for everything in lstdictionary[8]:
+#           return everything['results'][0]['destination'] == dest:
+#               totalCount += everything['trip_duration'][duration]
+#         if date == '2015-06':
+#       for everything in lstdictionary[9]:
+#           return everything['results'][0]['destination'] == dest:
+#               totalCount += everything['trip_duration'][duration]
+#     if date == '2015-07':
+#       for everything in lstdictionary[10]:
+#           return everything['results'][0]['destination'] == dest:
+#               totalCount += everything['trip_duration'][duration]
+
+#     if date == '2015-08':
+#       for everything in lstdictionary[11]:
+#           return everything['results'][0]['destination'] == dest:
+#               totalCount += everything['trip_duration'][duration]
+
+#     if date == '2015-09':
+#       for everything in lstdictionary[12]:
+#           return everything['results'][0]['destination'] == dest:
+#               totalCount += everything['trip_duration'][duration]
+              
+#     return totalCount
 
 a = [{'advance_search_period': {'0-7': 1196,
    '106-112': 234,
