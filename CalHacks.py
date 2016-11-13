@@ -8,6 +8,7 @@ import googlemaps
 import re
 import urllib
 import geocoder
+import flask
 
 period = '2014-01--2014-12'
 origin = 'TYO'
